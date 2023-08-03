@@ -1,2 +1,2 @@
 #!/bin/bash
-telnet https://www.youtube.com/watch?v=t6JXuSpSRCs&ab_channel=MOVClips
+telnet youtube.com/watch?v=t6JXuSpSRCs&ab_channel=MOVClips
