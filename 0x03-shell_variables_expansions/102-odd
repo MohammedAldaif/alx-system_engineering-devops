@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -1t /usr | perl -ne 'print if ($.%2)'
+read | ls -1t | perl -ne 'print if ($.%2)'
