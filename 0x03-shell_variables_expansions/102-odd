@@ -1,2 +1,2 @@
 #!/bin/bash
-read | ls -1t | perl -ne 'print if ($.%2)'
+paste -d - - | cut-d, -f1
