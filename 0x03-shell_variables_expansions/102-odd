@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -1t | awk 'NR%2!=0'
+ls -1t | perl -ne 'print if ($.%2)'
