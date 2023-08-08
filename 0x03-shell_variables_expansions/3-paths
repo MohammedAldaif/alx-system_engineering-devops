@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $PATH | tree -d | tail -n 1 | tr -d "[:alpha:]"
+echo $PATH | tr ':' '\n' | wc -l
