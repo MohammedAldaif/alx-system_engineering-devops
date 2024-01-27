@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-#displays displays a list of currently running processes , including those which might not have a TTY.
-ps aux
+# Display a list of currently running processes with hierarchy
+# Use the 'ps' command to retrieve process information
+ps -e -o pid,ppid,user,cmd --forest | awk '{printf "%-13s| %-13s| %-10s| %s\n", $1, $2, $3, $4}'
