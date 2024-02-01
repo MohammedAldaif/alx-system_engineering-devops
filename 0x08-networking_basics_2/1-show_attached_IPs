@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Using 'ip' command to show all active IPv4 addresses
+ip -4 addr show | awk '/inet / {print $2}' | while read -r ip; do
+  echo "$ip"
+done
