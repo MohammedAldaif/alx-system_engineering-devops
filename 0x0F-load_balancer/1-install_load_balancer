@@ -8,7 +8,7 @@ sudo apt-get update
 sudo apt-get install -y haproxy
 
 # Configure HAProxy
-cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg
+sudo tee /etc/haproxy/haproxy.cfg >/dev/null <<EOF
 global
     log /dev/log local0
     log /dev/log local1 notice
@@ -38,11 +38,8 @@ backend http_back
     server web-02 512480-web-02:80 check
 EOF
 
-# Replace STUDENT_ID with your actual student ID
-sudo sed -i 's/512480/your_student_id/g' /etc/haproxy/haproxy.cfg
-
 # Create init script for HAProxy management
-cat <<'EOF' | sudo tee /etc/init.d/haproxy
+sudo tee /etc/init.d/haproxy >/dev/null <<'EOF'
 #!/bin/sh
 
 ### BEGIN INIT INFO
@@ -110,4 +107,3 @@ sudo chmod +x /etc/init.d/haproxy
 
 # Start HAProxy service
 sudo service haproxy start
-
