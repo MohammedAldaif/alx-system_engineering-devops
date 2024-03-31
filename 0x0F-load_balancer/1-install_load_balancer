@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+# This script configures HAProxy to distribute traffic to web-01 and web-02 using round-robin load balancing
+
+set -euo pipefail
+
+# Install HAProxy
+sudo apt-get update
+sudo apt-get install -y haproxy
+
+# Configure HAProxy
+cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web-01 512480-web-01:80 check
+    server web-02 512480-web-02:80 check
+EOF
+
+# Replace STUDENT_ID with your actual student ID
+sudo sed -i 's/512480/your_student_id/g' /etc/haproxy/haproxy.cfg
+
+# Create init script for HAProxy management
+cat <<'EOF' | sudo tee /etc/init.d/haproxy
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          haproxy
+# Required-Start:    \$local_fs \$network \$remote_fs
+# Required-Stop:     \$local_fs \$network \$remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: HAProxy load balancer
+# Description:       The HAProxy load balancer redirects incoming requests
+#                    to the appropriate servers.
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DAEMON=/usr/sbin/haproxy
+CONFIG=/etc/haproxy/haproxy.cfg
+PIDFILE=/var/run/haproxy.pid
+EXTRAOPTS="-f \$CONFIG -p \$PIDFILE"
+
+test -x \$DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+start() {
+        echo -n "Starting haproxy: "
+        start-stop-daemon --start --pidfile \$PIDFILE --exec \$DAEMON -- \$EXTRAOPTS || return 2
+        echo "OK"
+}
+
+stop() {
+        echo -n "Stopping haproxy: "
+        start-stop-daemon --stop --pidfile \$PIDFILE || return 2
+        echo "OK"
+}
+
+restart() {
+        echo -n "Restarting haproxy: "
+        start-stop-daemon --stop --pidfile \$PIDFILE || return 2
+        sleep 1
+        start-stop-daemon --start --pidfile \$PIDFILE --exec \$DAEMON -- \$EXTRAOPTS || return 2
+        echo "OK"
+}
+
+case "\$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|force-reload)
+        restart
+        ;;
+  *)
+        echo "Usage: /etc/init.d/haproxy {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
+EOF
+
+# Make the init script executable
+sudo chmod +x /etc/init.d/haproxy
+
+# Start HAProxy service
+sudo service haproxy start
+
