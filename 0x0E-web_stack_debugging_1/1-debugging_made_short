@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+sed -i 's/^listen\s*\(.*\);/listen 80;/' /etc/nginx/sites-available/default
+service nginx restart
