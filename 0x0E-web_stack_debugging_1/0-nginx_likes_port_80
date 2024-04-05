@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Script to diagnose and fix Nginx not listening on port 80 issue
+
+# Install necessary tools
+apt-get update
+apt-get install -y net-tools nginx
+
+# Check if Nginx is running
+if systemctl is-active --quiet nginx; then
+    echo "Nginx is running."
+else
+    echo "Nginx is not running. Starting Nginx..."
+    systemctl start nginx
+fi
+
+# Check Nginx configuration files for issues
+nginx -t
+
+# Check if port 80 is being used by any other service
+if netstat -tuln | grep ':80 ' >/dev/null; then
+    echo "Port 80 is already in use by another service."
+    echo "Please stop the conflicting service or change its port."
+    exit 1
+fi
+
+# Ensure Nginx is configured to listen on port 80
+sed -i 's/^listen\s*\(.*\);/listen 80;/' /etc/nginx/sites-available/default
+
+# Restart Nginx
+systemctl restart nginx
+
+# Verify if Nginx is listening on port 80
+if netstat -tuln | grep ':80 ' >/dev/null; then
+    echo "Nginx is now listening on port 80."
+else
+    echo "Failed to make Nginx listen on port 80."
+fi
