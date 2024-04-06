@@ -17,8 +17,7 @@ get_subdomain_info() {
         if [[ -n "$answer" ]]; then
             record_type=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $4}')
             destination=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $5}')
-            ttl=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $2}')
-            echo "The subdomain $sub is a $record_type record and points to $destination (TTL: $ttl)"
+            echo "The subdomain $sub is a $record_type record and points to $destination"
         else
             echo "No information found for subdomain $sub.$domain"
         fi
