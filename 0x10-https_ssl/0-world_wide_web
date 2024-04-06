@@ -12,9 +12,15 @@ get_subdomain_info() {
     fi
 
     for sub in "${subdomains[@]}"; do
-        record_type=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $4}')
-        destination=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $5}')
-        echo "The subdomain $sub is a $record_type record and points to $destination"
+        answer=$(dig "$sub.$domain" +short)
+        if [[ -n "$answer" ]]; then
+            record_type=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $4}')
+            destination=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $5}')
+            ttl=$(dig "$sub.$domain" | awk '/ANSWER SECTION/{getline; print $2}')
+            echo "The subdomain $sub is a $record_type record and points to $destination (TTL: $ttl)"
+        else
+            echo "No information found for subdomain $sub.$domain"
+        fi
     done
 }
 
