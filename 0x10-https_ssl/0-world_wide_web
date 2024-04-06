@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # This script displays information about subdomains of a given domain
+# It retrieves the DNS records for specified subdomains and displays the record type, destination, and TTL.
 
 get_subdomain_info() {
     domain="$1"
