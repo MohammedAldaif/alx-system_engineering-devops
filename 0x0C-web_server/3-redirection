@@ -6,25 +6,25 @@ sudo ufw allow 'Nginx HTTP'
 mkdir -p /var/www/html/
 sudo chmod -R 755 /var/www
 echo 'Hello World!' > /var/www/html/index.html
-SERVER_CONFIG=\
-"server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
-	root /var/www/html;
-	index index.html index.htm index.nginx-debian.html;
-	server_name _;
-	location / {
-		try_files \$uri \$uri/ =404;
-	}
-	if (\$request_filename ~ redirect_me){
-		rewrite ^ https://sketchfab.com/bluepeno/models permanent;
-	}
-}"
+# Define the lines to add
+lines_to_add="\
+    location /redirect_me {\
+        return 301 http://example.com/new_page;\
+    }"
 
-bash -c "echo -e '$SERVER_CONFIG' > /etc/nginx/sites-enabled/default"
+# Find the line number where we want to insert the new lines
+line_number=$(grep -n "server {" /etc/nginx/sites-available/default | cut -d: -f1)
 
-if [ "$(pgrep -c nginx)" -le 0 ]; then
-	service nginx start
+# Insert the lines into the NGINX configuration file
+echo "$lines_to_add" | sudo sed -i "$((line_number + 1))i \\$lines_to_add" /etc/nginx/sites-available/default
+
+# Test NGINX configuration
+nginx -t
+
+# Reload NGINX if the test is successful
+if nginx -t; then
+    sudo nginx -s reload
+    echo "NGINX configuration reloaded."
 else
-	service nginx restart
+    echo "There was an error in the NGINX configuration. Please check and correct it."
 fi
