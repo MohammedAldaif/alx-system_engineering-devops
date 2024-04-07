@@ -16,7 +16,7 @@ echo 'Hello World!' > /var/www/html/index.html
 # Define the lines to add
 lines_to_add="\
     location /redirect_me {\
-        return 301 http://codingisfun.tech/redirect_me;\
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\
     }"
 
 # Find the line number where we want to insert the new lines
