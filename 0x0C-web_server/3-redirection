@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
-# Installs, configures, and starts the server
+# This script installs NGINX, configures a basic web page, and adds a redirection to another page.
+
+# Install NGINX
 apt-get update
 apt-get -y install nginx
+
+# Allow Nginx through the firewall
 sudo ufw allow 'Nginx HTTP'
+
+# Create the web page
 mkdir -p /var/www/html/
 sudo chmod -R 755 /var/www
 echo 'Hello World!' > /var/www/html/index.html
+
 # Define the lines to add
 lines_to_add="\
     location /redirect_me {\
-        return 301 http://example.com/new_page;\
+        return 301 http://codingisfun.tech/redirect_me;\
     }"
 
 # Find the line number where we want to insert the new lines
