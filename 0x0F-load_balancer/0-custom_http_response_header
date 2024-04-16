@@ -14,4 +14,4 @@ custom_header_conf="add_header X-Served-By \$hostname;"
 sudo sed -i "/^http {/a \ \ \ \ $custom_header_conf" /etc/nginx/nginx.conf
 
 # Restart Nginx to apply the changes
-sudo systemctl restart nginx
+sudo service restart nginx
