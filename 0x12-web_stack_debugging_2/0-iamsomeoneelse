@@ -2,6 +2,4 @@
 #this script runs the whoami command on the user entered as an argument
 # Store the first argument in a variable
 username="$1"
-
-# Use the variable as an input to the whoami command
-whoami "$username"
+sudo -u "$username" whoami
