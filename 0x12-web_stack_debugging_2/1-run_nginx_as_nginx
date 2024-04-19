@@ -1,19 +1,8 @@
 #!/usr/bin/env bash
 #this script configures the container with nginx as user, listen on port 8080 and not to use apt-get remove
-
-# Install necessary packages
-apt-get update
-apt-get install -y nginx
-
-# Stop Nginx service
-service nginx stop
-
-# Replace "user" directive in nginx.conf
-sed -i 's/^user .*;/user nginx;/' /etc/nginx/nginx.conf
-
-# Replace "listen" directive in default site configuration
-sed -i 's/listen .*;/listen 8080;/g' /etc/nginx/sites-available/default
-
-# Start Nginx service
-service nginx start
+sed -i "s/#user www-data/user nginx/" /etc/nginx/nginx.conf
+sed -i "s/80/8080/g" /etc/nginx/sites-available/default
+chmod 644 /etc/nginx/nginx.conf
+pkill apache2
+sudo -u nginx service nginx start
 
