@@ -24,6 +24,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Display the generated dump file
+echo "$DUMP_FILE"
+
 # Create a compressed tar.gz archive of the dump file
 tar -czf "$ARCHIVE_NAME" "$DUMP_FILE"
 
@@ -34,6 +37,17 @@ if [ $? -ne 0 ]; then
 fi
 
 # Clean up the dump file
-rm "$DUMP_FILE"
+#rm "$DUMP_FILE"
 
+# List files to show the generated archive
+ls
+
+# Verify the content of the backup.sql file
+more "$DUMP_FILE"
+
+# Print success message
 echo "Backup and compression successful: $ARCHIVE_NAME"
+
+# Display the file type of the archive
+file "$ARCHIVE_NAME"
+
